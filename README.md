@@ -15,13 +15,13 @@ from another device on the local network.
 ## Installation
 
 ``` bash
-$ npm install ramlmn/serv
+$ npm install --global ramlmn/serv
 
 # or
 
 $ git clone https://github.com/ramlmn/serv.git
 $ cd serv
-$ npm i && npm link
+$ npm install && npm link
 ```
 
 ## Usage
