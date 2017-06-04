@@ -1,0 +1,25 @@
+{
+  "name": "serv",
+  "version": "1.0.0",
+  "description": "Simple development server for static files",
+  "license": "MIT",
+  "repository": "ramlmn/serv",
+  "author": "Ram Lmn <ramlmn@outlook.com>",
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "main": "./lib/serv.js",
+  "bin": {
+    "serv": "./bin/serv.js"
+  },
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "compression": "^1.6.2",
+    "mz": "^2.6.0",
+    "normalize-url": "^1.9.1",
+    "parse-url": "^1.3.7",
+    "pem": "^1.9.7",
+    "send": "^0.15.3",
+    "yargs": "^8.0.1"
+  }
+}
