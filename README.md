@@ -21,7 +21,7 @@ $ npm install ramlmn/serv
 
 $ git clone https://github.com/ramlmn/serv.git
 $ cd serv
-$ npm link
+$ npm i && npm link
 ```
 
 ## Usage
