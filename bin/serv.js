@@ -19,6 +19,8 @@ const argv = yargs
     'c': 'Enable compression',
     'l': 'Enable dir listing (not with -r)',
     'r': 'Rewrite to root (not with -l)',
+    's': 'Use https',
+    'h2': 'Enable http2 protocol',
   })
   .alias({
     'p': 'port',
@@ -26,10 +28,20 @@ const argv = yargs
     'c': 'compress',
     'l': 'listing',
     'r': 'rewrite',
+    's': 'secure',
+    'h2': 'http2',
   })
   .number(['p'])
-  .boolean(['c', 'l', 'r'])
-  .default({'p': 5800, 'd': './', 'c': false, 'l': false, 'r': false})
+  .boolean(['c', 'l', 'r', 's', 'h2'])
+  .default({
+    'p': 5800,
+    'd': './',
+    'c': false,
+    'l': false,
+    'r': false,
+    's': false,
+    'h2': false,
+  })
   .argv;
 
 
@@ -45,14 +57,7 @@ function logger(request, response) {
 };
 
 // Options for server
-const options = {
-  dir: argv.dir,
-  port: argv.port,
-  compress: argv.compress,
-  listing: argv.listing,
-  rewrite: argv.rewrite,
-  logger,
-};
+const options = Object.assign({logger}, argv);
 
 // Create new instance of serv
 const staticServer = new Serv(options);
@@ -64,11 +69,15 @@ staticServer.start()
       console.log(chalk.yellow('[FLAG]'), 'Compression enabled');
     }
 
-    if (staticServer.listing && !staticServer.rewrite) {
-      console.log(chalk.yellow('[FLAG]'), 'Listing enabled');
+    if (staticServer.options.http2) {
+      console.log(chalk.yellow('[FLAG]'), 'HTTP/2 enabled');
+    } else if (staticServer.options.secure) {
+      console.log(chalk.yellow('[FLAG]'), 'HTTPS enabled');
     }
 
-    if (!staticServer.listing && staticServer.rewrite) {
+    if (staticServer.options.listing) {
+      console.log(chalk.yellow('[FLAG]'), 'Listing enabled');
+    } else if (staticServer.options.rewrite) {
       console.log(chalk.yellow('[FLAG]'), 'Rewrite enabled');
     }
 

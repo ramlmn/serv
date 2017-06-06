@@ -12,6 +12,8 @@ any non-existing paths to root of the server.
 (similar to `127.0.0.1:port`) or `computer-name:port` if you wish to access it
 from another device on the local network.
 
+`serv` also supports `h2 (http/2)` and self-signed certificates (`https`).
+
 ## Installation
 
 ``` bash
@@ -39,8 +41,13 @@ Flag                | Default   | Description
  `-c`, `--compress` | `false`   | Enable compression or not
  `-l`, `--listing`  | `false`   | Enable directory listing
  `-r`, `--rewrite`  | `false`   | Rewrite requests to root
+ `-s`, `--secure`   | `false`   | Prefer `https` over `http`
+ `-h2`, `--http2`   | `false`   | Run a `h2` server
 
-**WARN:** `--listing` and `--rewrite` cannot be used together.
+> **Note:**
+> * `--listing` and `--rewrite` cannot be used together.
+> * `--secure` option is simply ignored if `--http2` is used.
+> * `http` requests are not upgraded automatically to `https`
 
 ### From Node API
 
@@ -54,6 +61,8 @@ const options = {
   compress: true,
   listing: false,
   rewrite: false,
+  secure: true,
+  http2: true,
   logger: (request, response) => {
     // Log `request` and `response` or whatever
   },
