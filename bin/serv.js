@@ -34,7 +34,7 @@ const argv = yargs
   .number(['p'])
   .boolean(['c', 'l', 'r', 's', 'h2'])
   .default({
-    'p': 5800,
+    'p': 8080,
     'd': './',
     'c': false,
     'l': false,
@@ -63,32 +63,40 @@ const options = Object.assign({logger}, argv);
 const staticServer = new Serv(options);
 
 // Start the server
-staticServer.start()
-  .then(_ => {
-    if (staticServer.options.compress) {
-      console.log(chalk.yellow('[FLAG]'), 'Compression enabled');
+(async _ => {
+  try {
+    await staticServer.start();
+
+    const status = staticServer.status;
+    if (status.options.compress) {
+      console.log(chalk.yellow('[FLG]'), 'Compression enabled');
     }
 
-    if (staticServer.options.http2) {
-      console.log(chalk.yellow('[FLAG]'), 'HTTP/2 enabled');
-    } else if (staticServer.options.secure) {
-      console.log(chalk.yellow('[FLAG]'), 'HTTPS enabled');
+    if (status.options.http2) {
+      console.log(chalk.yellow('[FLG]'), 'HTTP/2 enabled');
+    } else if (status.options.secure) {
+      console.log(chalk.yellow('[FLG]'), 'HTTPS enabled');
     }
 
-    if (staticServer.options.listing) {
-      console.log(chalk.yellow('[FLAG]'), 'Listing enabled');
-    } else if (staticServer.options.rewrite) {
-      console.log(chalk.yellow('[FLAG]'), 'Rewrite enabled');
+    if (status.options.listing) {
+      console.log(chalk.yellow('[FLG]'), 'Listing enabled');
+    } else if (status.options.rewrite) {
+      console.log(chalk.yellow('[FLG]'), 'Rewrite enabled');
     }
 
-    console.log(chalk.green('[INFO]'), 'Serving directory',
-      chalk.cyan(staticServer.options.dir));
-    console.log(chalk.green('[INFO]'), 'Listening on port',
-      chalk.cyan(staticServer.options.port));
-    console.log(chalk.green('[INFO]'), 'Server started at',
-      chalk.cyan((new Date()).toLocaleString()));
-  })
-  .catch(err => {
-    console.error(chalk.red('[ERR!]'), err);
+    console.log(chalk.green('[INF]'), 'Serving directory', chalk.cyan(status.options.dir));
+    console.log(chalk.green('[INF]'), 'Listening on port', chalk.cyan(status.options.port));
+
+    if (status.listening) {
+      console.log(chalk.green('[INF]'), 'Server started at',
+        chalk.cyan(new Date().toLocaleString()));
+    } else {
+      console.log(chalk.red('[ERR]'), 'Failed to start server',
+        chalk.cyan(new Date().toLocaleString()));
+      process.exit(1);
+    }
+  } catch (err) {
+    console.error(chalk.red('[ERR]'), err);
     process.exit(1);
-  });
+  }
+})();
