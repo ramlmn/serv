@@ -3,100 +3,100 @@
 'use strict';
 
 const yargs = require('yargs');
-const chalk = require('chalk');
-const Serv = require('../lib/serv.js');
+const Serv = require('../lib/index.js');
+const logger = require('../lib/helpers/logger.js');
 
-const argv = yargs
+const options = yargs
   .usage('Usage: $0 [...options]')
   .example('$0 --port 8080')
   .example('$0 -p 8182 -d dist -c')
-  .example('$0 --port 8181 --dir ./share --listing')
   .example('$0 -p 8182 -d ../../my-other-project --compress')
   .help('help')
   .describe({
     'p': 'Port to listen on',
     'd': 'Directory to serve (relative)',
     'c': 'Enable compression',
-    'l': 'Enable dir listing (not with -r)',
-    'r': 'Rewrite to root (not with -l)',
-    's': 'Use https',
+    's': 'Use https - self signed keys',
     'h2': 'Enable http2 protocol',
+    'l': 'Enable directory listing',
+    'f': 'Enable fast mode(no compression, ETags, logging)',
   })
   .alias({
     'p': 'port',
     'd': 'dir',
     'c': 'compress',
-    'l': 'listing',
-    'r': 'rewrite',
     's': 'secure',
     'h2': 'http2',
+    'l': 'listing',
+    'f': 'fast',
   })
   .number(['p'])
-  .boolean(['c', 'l', 'r', 's', 'h2'])
+  .boolean(['c', 's', 'h2', 'l', 'f'])
   .default({
     'p': 8080,
     'd': './',
-    'c': false,
-    'l': false,
-    'r': false,
+    'c': true,
     's': false,
     'h2': false,
+    'l': false,
+    'f': false,
   })
   .argv;
 
+options.logger = logger;
 
-/**
- * Logs requests
- *
- * @param {Object} request http request object
- * @param {Object} response http response object
- */
-function logger(request, response) {
-  console.log(chalk.yellow('[LOG]'), chalk.magenta((new Date()).toLocaleTimeString()),
-    chalk.cyan(response.statusCode), '->', chalk.magenta(request.method), request.url);
-};
-
-// Options for server
-const options = Object.assign({logger}, argv);
-
-// Create new instance of serv
 const staticServer = new Serv(options);
 
-// Start the server
 (async _ => {
   try {
-    await staticServer.start();
+    const server = await staticServer.start();
+    const options = staticServer.options;
 
-    const status = staticServer.status;
-    if (status.options.compress) {
-      console.log(chalk.yellow('[FLG]'), 'Compression enabled');
+    if (options.compress) {
+      console.info('[FLAG]', 'Compression enabled');
     }
 
-    if (status.options.http2) {
-      console.log(chalk.yellow('[FLG]'), 'HTTP/2 enabled');
-    } else if (status.options.secure) {
-      console.log(chalk.yellow('[FLG]'), 'HTTPS enabled');
+    if (options.http2) {
+      console.info('[FLAG]', 'HTTP/2 enabled');
     }
 
-    if (status.options.listing) {
-      console.log(chalk.yellow('[FLG]'), 'Listing enabled');
-    } else if (status.options.rewrite) {
-      console.log(chalk.yellow('[FLG]'), 'Rewrite enabled');
+    if (options.secure) {
+      console.info('[FLAG]', 'HTTPS enabled');
     }
 
-    console.log(chalk.green('[INF]'), 'Serving directory', chalk.cyan(status.options.dir));
-    console.log(chalk.green('[INF]'), 'Listening on port', chalk.cyan(status.options.port));
+    console.info('[INFO]', 'Serving directory', options.dir);
+    console.info('[INFO]', 'Listening on port', options.port);
 
-    if (status.listening) {
-      console.log(chalk.green('[INF]'), 'Server started at',
-        chalk.cyan(new Date().toLocaleString()));
+    if (server.listening) {
+      console.info('[INFO]', 'Server started at', (new Date()).toISOString());
     } else {
-      console.log(chalk.red('[ERR]'), 'Failed to start server',
-        chalk.cyan(new Date().toLocaleString()));
-      process.exit(1);
+      console.error('[FATAL]', 'Failed to start server', (new Date()).toISOString());
+      process.exit();
     }
   } catch (err) {
-    console.error(chalk.red('[ERR]'), err);
-    process.exit(1);
+    console.error('[FATAL]', err);
+    process.exit();
   }
 })();
+
+
+if (process.platform === 'win32') {
+  require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  }).on('SIGINT', _ => {
+    process.emit('SIGINT');
+  });
+}
+
+process.on('SIGINT', async _ => {
+  console.log('\n[INFO]', 'Server stopped at', (new Date()).toISOString());
+  await staticServer.stop();
+  process.exit();
+});
+
+process.on('SIGTERM', async _ => {
+  console.log('\n[INFO]', 'Server stopped at', (new Date()).toISOString());
+  await staticServer.stop();
+  process.exit();
+});
