@@ -1,5 +1,5 @@
 {
-  "name": "serv",
+  "name": "@ramlmn/serv",
   "version": "0.1.0",
   "description": "Simple development server for static files",
   "license": "MIT",
