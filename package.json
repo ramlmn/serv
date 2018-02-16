@@ -1,6 +1,6 @@
 {
   "name": "@ramlmn/serv",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Simple development server for static files",
   "license": "MIT",
   "repository": "ramlmn/serv",

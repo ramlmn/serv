@@ -18,7 +18,7 @@ from another device on the local network.
 ## Installation
 
 ``` bash
-$ npm install --global ramlmn/serv
+$ npm install --global @ramlmn/serv
 
 # or
 
