@@ -1,6 +1,6 @@
 {
   "name": "@ramlmn/serv",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Simple development server for static files",
   "license": "MIT",
   "repository": "ramlmn/serv",
@@ -23,7 +23,7 @@
     "polka": "^0.3.3",
     "send": "^0.16.2",
     "uuid": "^3.2.1",
-    "yargs": "^11.0.0"
+    "yargs": "^11.1.0"
   },
   "yargs": {
     "short-option-groups": false

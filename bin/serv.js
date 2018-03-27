@@ -19,7 +19,7 @@ const options = yargs
     's': 'Use https - self signed keys',
     'h2': 'Enable http2 protocol',
     'l': 'Enable directory listing',
-    'f': 'Enable fast mode(no compression, ETags, logging)',
+    'f': 'Enable fast mode(no compression/ETags/logging)',
   })
   .alias({
     'p': 'port',
