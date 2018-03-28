@@ -27,5 +27,10 @@
   },
   "yargs": {
     "short-option-groups": false
+  },
+  "devDependencies": {
+    "node-fetch": "^2.1.2",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.9.0"
   }
 }
