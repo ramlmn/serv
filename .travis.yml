@@ -4,7 +4,8 @@ language: node_js
 node_js:
   - "9"
 before_script:
-  - sudo apt-get install wrk
+  - wget https://launchpad.net/ubuntu/+archive/primary/+files/wrk_4.0.2-2_amd64.deb
+  - sudo dpkg -i ./wrk_4.0.2-2_amd64.deb
 script:
   - npm run test
   - npm run bench
