@@ -1,16 +1,20 @@
 'use strict';
 
 const path = require('path');
-const fetch = require('node-fetch');
+const {TLSSocket} = require('tls');
+const {promisify} = require('util');
+const request = promisify(require('request').defaults({strictSSL: false}));
 
 const tape = require('tape');
 const tapSpec = require('tap-spec');
+const fetch = require('node-fetch');
+
+const Serv = require('../lib/index.js');
+
 
 tape.createStream()
   .pipe(tapSpec())
   .pipe(process.stdout);
-
-const Serv = require('../lib/index.js');
 
 
 tape('Static file test', async t => {
@@ -54,6 +58,55 @@ tape('ETag test', async t => {
       t.pass('Got valid ETag');
     } else {
       t.fail('Got invalid ETag');
+    }
+  } catch (e) {
+    t.fail('Failed: ', e);
+  }
+
+  await staticServ.stop();
+});
+
+
+tape('https test', async t => {
+  t.plan(1);
+
+  const staticServ = new Serv({dir: path.join(__dirname, './public'), secure: true});
+
+  try {
+    await staticServ.start();
+    const {port} = staticServ.options;
+
+    const res = await request(`https://localhost:${port}/sample.json`, {insecure: true});
+
+    if (res.statusCode === 200
+      && (res.socket instanceof TLSSocket || res.connection instanceof TLSSocket)) {
+      t.pass('https working');
+    } else {
+      t.fail('https not working');
+    }
+  } catch (e) {
+    t.fail('Failed: ', e);
+  }
+
+  await staticServ.stop();
+});
+
+
+tape('compression test', async t => {
+  t.plan(1);
+
+  const staticServ = new Serv({dir: path.join(__dirname, './public'), compress: true});
+
+  try {
+    await staticServ.start();
+    const {port} = staticServ.options;
+
+    const res = await fetch(`http://localhost:${port}/garble.txt`);
+
+    if (res.headers.get('content-encoding') === 'gzip') {
+      t.pass('gzip ok');
+    } else {
+      t.fail('gzip not ok');
     }
   } catch (e) {
     t.fail('Failed: ', e);
