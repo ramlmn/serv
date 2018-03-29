@@ -1,10 +1,10 @@
-sudo: required
 dist: trusty
+sudo: required
 language: node_js
 node_js:
   - "9"
 before_script:
-  - apt-get install wrk
+  - sudo apt-get install wrk
 script:
   - npm run test
   - npm run bench
