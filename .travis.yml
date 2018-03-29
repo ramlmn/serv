@@ -4,9 +4,11 @@ language: node_js
 node_js:
   - "9"
 before_script:
-  - wget https://launchpad.net/ubuntu/+archive/primary/+files/wrk_4.0.2-2_amd64.deb
-  - sudo mv wrk_4.0.2-2_amd64.deb /var/cache/apt/archives/
-  - sudo apt-get install wrk
+  - sudo apt-get install build-essential libssl-dev git -y
+  - git clone https://github.com/wg/wrk.git wrk
+  - cd wrk
+  - sudo make
+  - sudo cp wrk /usr/local/bin
 script:
   - npm run test
   - npm run bench
