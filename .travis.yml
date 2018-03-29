@@ -1,14 +1,6 @@
 dist: trusty
-sudo: required
 language: node_js
 node_js:
   - "9"
-before_script:
-  - sudo apt-get install build-essential libssl-dev git -y
-  - git clone https://github.com/wg/wrk.git wrk
-  - cd wrk
-  - sudo make
-  - sudo cp wrk /usr/local/bin
 script:
   - npm run test
-  - npm run bench
