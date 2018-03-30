@@ -8,8 +8,7 @@
   "scripts": {
     "lint": "eslint .",
     "start": "node ./bin/serv.js",
-    "test": "npm run lint && node test/test.js",
-    "bench": "node test/bench.js"
+    "test": "npm run lint && node test/test.js"
   },
   "main": "./lib/serv.js",
   "bin": {
