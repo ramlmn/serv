@@ -27,6 +27,8 @@ $ cd serv
 $ npm install && npm link
 ```
 Try `sudo` with `npm link` if it fails.
+
+> NOTE: Windows users, get OpenSSL from [https://slproweb.com/products/Win32OpenSSL.html](https://slproweb.com/products/Win32OpenSSL.html)
 ## Usage
 
 ### From terminal
