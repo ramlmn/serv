@@ -1,7 +1,7 @@
 {
   "name": "@ramlmn/serv",
-  "version": "0.2.1",
-  "description": "Simple development server for static files",
+  "version": "0.3.0",
+  "description": "An experimental development server for serving static files",
   "license": "MIT",
   "repository": "ramlmn/serv",
   "author": "Ram Lmn <ramlmn@outlook.com>",
