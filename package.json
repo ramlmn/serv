@@ -1,21 +1,31 @@
 {
   "name": "@ramlmn/serv",
   "version": "0.3.0",
+  "author": "@mram",
   "description": "An experimental development server for serving static files",
   "license": "MIT",
-  "repository": "ramlmn/serv",
-  "author": "Ram Lmn <ramlmn@outlook.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ramlmn/serv"
+  },
+  "keywords": [
+    "serv",
+    "server",
+    "static",
+    "http",
+    "https",
+    "http2"
+  ],
   "scripts": {
-    "lint": "eslint .",
     "start": "node ./bin/serv.js",
-    "test": "npm run lint && node test/test.js"
+    "test": "eslint . && node test/test.js"
   },
   "main": "./lib/serv.js",
   "bin": {
     "serv": "./bin/serv.js"
   },
   "dependencies": {
-    "@ramlmn/hh2": "^0.1.1",
+    "@ramlmn/hh2": "^0.2.0",
     "compression": "^1.7.1",
     "ee-first": "^1.1.1",
     "get-port": "^3.2.0",
