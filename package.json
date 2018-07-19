@@ -8,6 +8,9 @@
     "type": "git",
     "url": "https://github.com/ramlmn/serv"
   },
+  "engines": {
+    "node": ">=8"
+  },
   "keywords": [
     "serv",
     "server",

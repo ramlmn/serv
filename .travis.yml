@@ -1,6 +1,7 @@
 dist: trusty
 language: node_js
 node_js:
-  - "9"
+  - "8"
+  - "10"
 script:
   - npm run test
