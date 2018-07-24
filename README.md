@@ -1,19 +1,8 @@
 # serv
 
-An experimental development server for serving static files.
+A development server for serving static files.
 
 ![Terminal screenshot of serv](./snap/terminal.png)
-> **Note:** serv is a hacky, experimental project
-
-`serv` starts a simple development server for your static files from the
-console written in NodeJS. It also supports directory listing and compression.
-
-serv can run a `http` or `https`(self-signed) and `http2` server.
-
-`serv` runs on a specified port and can be accessed via `localhost:port`
-(similar to `127.0.0.1:port`) or `computer-name:port` if you wish to access it
-from another device on the local network.
-
 
 ## Installation
 
@@ -27,8 +16,8 @@ $ npm install && npm link
 ```
 Try `sudo` with `npm link` if it fails.
 
-> **Note:** Windows users, get OpenSSL from
-> [https://slproweb.com/products/Win32OpenSSL.html](https://slproweb.com/products/Win32OpenSSL.html)
+**Note:** Windows users, get OpenSSL from
+[https://slproweb.com/products/Win32OpenSSL.html](https://slproweb.com/products/Win32OpenSSL.html)
 
 ## Usage
 
@@ -50,9 +39,9 @@ Flag                | Default   | Description
  `-h2`, `--http2`   | `false`   | Run a `h2` server
  `-f`, `--fast`     | `false`   | Fast mode(no compression/ETags/logging)
 
-> **Note:** Currently no browser supports http2 without TLS, `-h2` currently is
-> worthy only when used with `-s`
-> [(ref)](https://nodejs.org/api/http2.html#http2_server_side_example)
+**Note:** Currently no browser supports http2 without TLS, `-h2` currently is
+worthy only when used with `-s`
+[(ref)](https://nodejs.org/api/http2.html#http2_server_side_example)
 
 ### From Node API
 
