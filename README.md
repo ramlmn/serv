@@ -1,5 +1,7 @@
 # serv
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/ramlmn/serv.svg)](https://greenkeeper.io/)
+
 A development server for serving static files.
 
 ![Terminal screenshot of serv](./snap/terminal.png)
