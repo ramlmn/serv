@@ -37,7 +37,6 @@ Flag                | Default   | Description
  `-l`, `--listing`  | `false`   | Enable directory listing
  `-s`, `--secure`   | `false`   | Create a secure version of the server
  `-h2`, `--http2`   | `false`   | Run a `h2` server
- `-f`, `--fast`     | `false`   | Fast mode(no compression/ETags/logging)
 
 **Note:** Currently no browser supports http2 without TLS, `-h2` currently is
 worthy only when used with `-s`
