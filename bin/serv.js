@@ -1,18 +1,10 @@
 #!/usr/bin/env node
 
-const {promisify} = require('util');
-
 const arg = require('arg');
-const pem = require('pem');
 const getPort = require('get-port');
-const hh2 = require('@ramlmn/hh2');
-const compression = require('compression');
-const {magenta, cyan, red, bold} = require('kleur');
+const {magenta, cyan, underline} = require('kleur');
 
-const staticHandler = require('../lib/static-serv.js');
-
-const compressionHandler = promisify(compression());
-const createCertificates = promisify(pem.createCertificate);
+const {createServer} = require('../lib/serv-utils.js');
 
 const rawArgs = arg({
     '--help': Boolean,
@@ -20,9 +12,8 @@ const rawArgs = arg({
     '--port': Number,
     '--dir': String,
     '--listing': Boolean,
-    '--https': Boolean,
-    '--http2': Boolean,
     '--secure': Boolean,
+    '--http2': Boolean,
     '--compress': Boolean,
 
     '-h': '--help',
@@ -31,10 +22,8 @@ const rawArgs = arg({
     '-d': '--dir',
     '-l': '--listing',
     '-s': '--secure',
-    '-2': '--http2',
     '-c': '--compress',
   }, {
-    permissive: true,
     argv: process.argv.slice(2),
   });
 
@@ -45,22 +34,13 @@ const args = Object.keys(rawArgs).reduce((acc, key) => {
   }, {});
 
 
-const getHandler = args => {
-  const reqHandler = staticHandler(args);
-
-  let handler = async (req, res) => {
-    await reqHandler(req, res);
-  };
-
-  if (args.compress) {
-    handler = async (req, res) => {
-      await compressionHandler(req, res);
-      await reqHandler(req, res);
-    };
-  }
-
-  return handler;
-};
+// set http version
+if (args.http2) {
+  args.version = 2;
+  args.secure = true;
+} else {
+  arg.version = 1;
+}
 
 const registerShutdown = fn => {
   let run = false;
@@ -81,33 +61,30 @@ const registerShutdown = fn => {
 (async _ => {
   const PORT = await getPort({port: args.port || undefined});
 
-  const {
-    certificate: cert,
-    serviceKey: key,
-  } = await createCertificates({selfSigned: true, days: 7});
-
-  const handler = getHandler(args);
-
-  const server = hh2(handler, {cert, key, secure: args.secure, h2: args.http2});
+  const server = await createServer(args);
 
   server.listen(PORT, '0.0.0.0', _ => {
-    const address = server.address();
+    let address = server.address();
 
     registerShutdown(_ => server.close());
 
     if (args.port && args.port !== PORT) {
-      console.log(`${cyan('INFO:')} using ${bold(PORT)} instead of ${bold(args.port)}`);
+      console.log(`${magenta('INFO:')} using ${bold(PORT)} instead of ${bold(args.port)}`);
     }
 
-    if (typeof address === 'string') {
-      console.log(magenta(`Listening on ${address}`));
-    } else {
-      console.log(magenta(`Listening on ${address.address}:${address.port}`));
+    if (typeof address !== 'string') {
+      address = `${address.address}:${address.port}`;
     }
+
+    console.log(cyan(`> Listening on ${address}`));
+    console.log(
+      cyan('> Open'),
+      underline(`http${(args.secure || args.version === 2) ? 's' : ''}://localhost:${PORT}`)
+    );
   });
 
   process.on('SIGINT', _ => {
-    console.log(red('Force-closing all open sockets...'));
+    console.log(magenta('Terminating...'));
     process.exit(0);
   });
 })();
