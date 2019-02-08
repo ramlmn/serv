@@ -1,102 +1,90 @@
 #!/usr/bin/env node
 
-'use strict';
+const arg = require('arg');
+const getPort = require('get-port');
+const {magenta, cyan, underline} = require('kleur');
 
-const yargs = require('yargs');
-const Serv = require('../lib/index.js');
-const logger = require('../lib/helpers/logger.js');
+const {createServer} = require('../lib/serv-utils.js');
 
-const options = yargs
-  .usage('Usage: $0 [...options]')
-  .example('$0 --port 8080')
-  .example('$0 -p 8182 -d dist -c')
-  .example('$0 -p 8182 -d ../../my-other-project --compress')
-  .help('help')
-  .describe({
-    'p': 'Port to listen on',
-    'd': 'Directory to serve (relative)',
-    'c': 'Enable compression',
-    's': 'Use https - self signed keys',
-    'h2': 'Enable http2 protocol',
-    'l': 'Enable directory listing',
-    'f': 'Enable fast mode(no compression/ETags/logging)',
-  })
-  .alias({
-    'p': 'port',
-    'd': 'dir',
-    'c': 'compress',
-    's': 'secure',
-    'h2': 'http2',
-    'l': 'listing',
-    'f': 'fast',
-  })
-  .number(['p'])
-  .boolean(['c', 's', 'h2', 'l', 'f'])
-  .default({
-    'p': 8080,
-    'd': './',
-    'c': true,
-    's': false,
-    'h2': false,
-    'l': false,
-    'f': false,
-  })
-  .argv;
+const rawArgs = arg({
+    '--help': Boolean,
+    '--version': Boolean,
+    '--port': Number,
+    '--dir': String,
+    '--listing': Boolean,
+    '--secure': Boolean,
+    '--http2': Boolean,
+    '--compress': Boolean,
 
-options.logger = logger;
-
-const staticServer = new Serv(options);
-
-(async _ => {
-  try {
-    const server = await staticServer.start();
-    const options = staticServer.options;
-
-    if (options.compress) {
-      console.info('[FLAG]', 'Compression enabled');
-    }
-
-    if (options.http2) {
-      console.info('[FLAG]', 'HTTP/2 enabled');
-    }
-
-    if (options.secure) {
-      console.info('[FLAG]', 'HTTPS enabled');
-    }
-
-    console.info('[INFO]', 'Serving directory', options.dir);
-    console.info('[INFO]', 'Listening on port', options.port);
-
-    if (server.listening) {
-      console.info('[INFO]', 'Server started at', (new Date()).toISOString());
-    } else {
-      console.error('[FATAL]', 'Failed to start server', (new Date()).toISOString());
-      process.exit();
-    }
-  } catch (err) {
-    console.error('[FATAL]', err);
-    process.exit();
-  }
-})();
-
-
-if (process.platform === 'win32') {
-  require('readline').createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  }).on('SIGINT', _ => {
-    process.emit('SIGINT');
+    '-h': '--help',
+    '-v': '--version',
+    '-p': '--port',
+    '-d': '--dir',
+    '-l': '--listing',
+    '-s': '--secure',
+    '-c': '--compress',
+  }, {
+    argv: process.argv.slice(2),
   });
+
+// remove '--' at the beginning
+const args = Object.keys(rawArgs).reduce((acc, key) => {
+    acc[key.replace('--', '')] = rawArgs[key];
+    return acc;
+  }, {});
+
+
+// set http version
+if (args.http2) {
+  args.version = 2;
+  args.secure = true;
+} else {
+  arg.version = 1;
 }
 
-process.on('SIGINT', async _ => {
-  console.log('\n[INFO]', 'Server stopped at', (new Date()).toISOString());
-  await staticServer.stop();
-  process.exit();
-});
+const registerShutdown = fn => {
+  let run = false;
 
-process.on('SIGTERM', async _ => {
-  console.log('\n[INFO]', 'Server stopped at', (new Date()).toISOString());
-  await staticServer.stop();
-  process.exit();
-});
+  const wrapper = _ => {
+    if (!run) {
+      run = true;
+      fn();
+    }
+  };
+
+  process.on('SIGINT', wrapper);
+  process.on('SIGTERM', wrapper);
+  process.on('exit', wrapper);
+};
+
+
+(async _ => {
+  const PORT = await getPort({port: args.port || undefined});
+
+  const server = await createServer(args);
+
+  server.listen(PORT, '0.0.0.0', _ => {
+    let address = server.address();
+
+    registerShutdown(_ => server.close());
+
+    if (args.port && args.port !== PORT) {
+      console.log(`${magenta('INFO:')} using ${bold(PORT)} instead of ${bold(args.port)}`);
+    }
+
+    if (typeof address !== 'string') {
+      address = `${address.address}:${address.port}`;
+    }
+
+    console.log(cyan(`> Listening on ${address}`));
+    console.log(
+      cyan('> Open'),
+      underline(`http${(args.secure || args.version === 2) ? 's' : ''}://localhost:${PORT}`)
+    );
+  });
+
+  process.on('SIGINT', _ => {
+    console.log(magenta('Terminating...'));
+    process.exit(0);
+  });
+})();
