@@ -1,10 +1,11 @@
-![npm-badge](https://img.shields.io/npm/v/@ramlmn/serv.svg?&style=flat-square)
-![travis-badge](https://img.shields.io/travis/ramlmn/serv/master.svg?label=Travis&style=flat-square)
-![appveyor-badge](https://img.shields.io/appveyor/ci/r0mflip/serv.svg?label=Appveyor&style=flat-square)
+[![npm-badge](https://img.shields.io/npm/v/@ramlmn/serv.svg?&style=flat-square)](https://www.npmjs.com/package/@ramlmn/serv)
+[![travis-badge](https://img.shields.io/travis/ramlmn/serv/master.svg?label=Travis&style=flat-square)](https://travis-ci.org/ramlmn/serv)
+[![appveyor-badge](https://img.shields.io/appveyor/ci/r0mflip/serv.svg?label=AppVeyor&style=flat-square)](https://ci.appveyor.com/project/r0mflip/serv)
 
 # serv
 
-A development server for serving static files with https, http2, compression...
+Static file server with https, http2 (recommened only for development)
+
 
 ## Installation
 
@@ -21,28 +22,33 @@ Try `sudo` with `npm link` if it fails.
 **Note:** Windows users, get OpenSSL from
 [https://slproweb.com/products/Win32OpenSSL.html](https://slproweb.com/products/Win32OpenSSL.html)
 
+
 ## Usage
 
 ### From terminal
+
 ``` bash
 $ serv --dir path/to/dir/ --port 8080
 ```
 
-Use `--help` for help and examples.
+
 #### Flags
 
-Flag                | Default   | Description
---------------------|-----------|-----------------------------------------------
- `-p`, `--port`     | `8080`    | Port to listen on
- `-d`, `--dir`      | `.`       | Relative path to directory to serve
- `-l`, `--listing`  | `false`   | Enable directory listing
- `-s`, `--secure`   | `false`   | Enables SSL flag
- `-2`, `--http2`    | `false`   | Enables http2 flag
- `-c`, `--compress` | `false`   | Enables compression
+ Flag               | Description
+--------------------|-----------------------------------------------
+ `-p`, `--port`     | Port to listen on (default 5000)
+ `-d`, `--dir`      | Relative path to directory to serve
+ `-l`, `--listing`  | Enable directory listing
+ `-s`, `--secure`   | Enables SSL flag
+ `-2`, `--http2`    | Enables http2 flag
+ `-c`, `--compress` | Enables compression
+ `-h`, `--help`     | Shows usage and options
 
 **Note:** Currently no browser supports http2 without TLS, `--http2` currently is
 worthy only when used with `-s`
 [(ref)](https://nodejs.org/api/http2.html#http2_server_side_example)
 
+
 ## License
+
 [MIT](LICENSE)

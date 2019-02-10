@@ -2,7 +2,7 @@
 
 const arg = require('arg');
 const getPort = require('get-port');
-const {magenta, cyan, underline} = require('kleur');
+const {magenta, cyan, underline, bold} = require('kleur');
 
 const {createServer} = require('../lib/serv-utils.js');
 
@@ -33,6 +33,40 @@ const args = Object.keys(rawArgs).reduce((acc, key) => {
     return acc;
   }, {});
 
+if (args.version) {
+  console.log(`v${require('../package.json').version}`);
+  process.exit(0);
+}
+
+if (args.help) {
+  console.log(`
+  serv - ${require('../package.json').description}
+
+  Usage
+    Serve current directory
+
+      $ serv
+
+    Listen on port 8080 with compression
+
+      $ serv --port 8080 --compress -d ./site/
+
+    Enable https with directory listing
+
+      $ serv --secure --listing
+
+  Options
+    -h, --help         Shows this help text
+    -p, --port         Port to listen on (default 5000)
+    -d, --dir          Path to directory
+    -l, --listing      Enable directory listing
+    -s, --secure       Enables SSL flag (https)
+    -2, --http2        Enables http2 flag
+    -c, --compress     Enables compression (gzip)
+  `);
+  process.exit(0);
+}
+
 
 // set http version
 if (args.http2) {
@@ -41,21 +75,6 @@ if (args.http2) {
 } else {
   arg.version = 1;
 }
-
-const registerShutdown = fn => {
-  let run = false;
-
-  const wrapper = _ => {
-    if (!run) {
-      run = true;
-      fn();
-    }
-  };
-
-  process.on('SIGINT', wrapper);
-  process.on('SIGTERM', wrapper);
-  process.on('exit', wrapper);
-};
 
 
 (async _ => {
@@ -66,7 +85,6 @@ const registerShutdown = fn => {
   server.listen(PORT, '0.0.0.0', _ => {
     let address = server.address();
 
-    registerShutdown(_ => server.close());
 
     if (args.port && args.port !== PORT) {
       console.log(`${magenta('INFO:')} using ${bold(PORT)} instead of ${bold(args.port)}`);
@@ -83,8 +101,11 @@ const registerShutdown = fn => {
     );
   });
 
+  process.on('exit', server.close);
+  process.on('SIGTERM', server.close);
   process.on('SIGINT', _ => {
     console.log(magenta('Terminating...'));
+    server.close();
     process.exit(0);
   });
 })().catch(err => {
