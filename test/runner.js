@@ -40,8 +40,9 @@ module.exports.run = async (args, urlPath) => {
 
     server.close();
     return res;
-  } catch (e) {
+  } catch (err) {
+    // close and throw again
     server.close();
-    return {};
+    throw err;
   }
 };

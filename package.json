@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/ramlmn/serv#readme",
   "engines": {
-    "node": ">=8"
+    "node": "^8.10.0 || >=9.10.0"
   },
   "keywords": [
     "serv",
@@ -27,7 +27,9 @@
   ],
   "scripts": {
     "start": "node ./bin/serv.js -p 5000 -c -l -d . --http2",
-    "test": "eslint . && node test/test.js"
+    "lint": "eslint .",
+    "test:openssl": "node test/test-openssl.js",
+    "test": "node test/test.js"
   },
   "main": "./lib/serv.js",
   "bin": {
@@ -45,8 +47,8 @@
   },
   "devDependencies": {
     "eslint": "^5.13.0",
-    "eslint-config-r0mflip": "^0.2.0",
+    "eslint-config-r0mflip": "^0.2.1",
     "node-fetch": "^2.3.0",
-    "tape": "^4.9.2"
+    "tape": "^4.10.0"
   }
 }

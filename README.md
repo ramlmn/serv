@@ -1,3 +1,7 @@
+![npm-badge](https://img.shields.io/npm/v/@ramlmn/serv.svg?&style=flat-square)
+![travis-badge](https://img.shields.io/travis/ramlmn/serv/master.svg?label=Travis&style=flat-square)
+![appveyor-badge](https://img.shields.io/appveyor/ci/r0mflip/serv.svg?label=Appveyor&style=flat-square)
+
 # serv
 
 A development server for serving static files with https, http2, compression...

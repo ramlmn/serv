@@ -87,4 +87,7 @@ const registerShutdown = fn => {
     console.log(magenta('Terminating...'));
     process.exit(0);
   });
-})();
+})().catch(err => {
+  console.error(magenta(err.message));
+  process.exit(1);
+});
