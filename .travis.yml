@@ -3,5 +3,11 @@ language: node_js
 node_js:
   - "8"
   - "10"
+
 script:
+  - sudo apt remove openssl
+    # when openssl not found
+  - npm run test:openssl
+    # install openssl and run again
+  - sudo apt install openssl
   - npm run test
