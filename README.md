@@ -6,6 +6,7 @@
 
 Static file server with https, http2 (recommened only for development)
 
+![terminal.png](snap/terminal.png)
 
 ## Installation
 
