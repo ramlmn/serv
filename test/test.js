@@ -44,4 +44,3 @@ tape('https test', async t => {
     t.fail('Failed: ', e);
   }
 });
-
