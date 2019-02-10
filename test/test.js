@@ -46,3 +46,23 @@ tape('https test', async t => {
     t.fail('Failed: ', e);
   }
 });
+
+tape('openssl not found', async t => {
+  t.plan(1);
+
+  const cnfPath = process.env.OPENSSL_CONF;
+  // remove the environment variable
+  delete process.env.OPENSSL_CONF;
+
+  try {
+    // run, this should throw
+    await runner.run(Object.assign({}, argsTemplate, {secure: true}), '/emoji.json');
+
+    // reset back
+    process.env.OPENSSL_CONF = cnfPath;
+    t.fail(`not throws OPENSSL_CNF=${process.env.OPENSSL_CONF}`);
+  } catch (e) {
+    process.env.OPENSSL_CONF = cnfPath;
+    t.pass(`throws fine OPENSSL_CNF=${process.env.OPENSSL_CONF}`);
+  }
+});
