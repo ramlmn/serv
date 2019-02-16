@@ -1,6 +1,6 @@
 {
   "name": "@ramlmn/serv",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "author": "@r0mflip",
   "description": "Static file server with https, http2",
   "license": "MIT",
@@ -28,13 +28,17 @@
   "scripts": {
     "start": "node ./bin/serv.js -p 5000 -c -l -d . --http2",
     "lint": "eslint .",
-    "test:openssl": "node test/test-openssl.js",
     "test": "node test/test.js"
   },
   "main": "./lib/serv.js",
   "bin": {
     "serv": "./bin/serv.js"
   },
+  "files": [
+    "bin/*",
+    "lib/*",
+    ".eslintrc"
+  ],
   "dependencies": {
     "arg": "^4.1.0",
     "compression": "^1.7.3",
