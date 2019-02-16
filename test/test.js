@@ -44,3 +44,21 @@ tape('https test', async t => {
     t.fail('Failed: ', e);
   }
 });
+
+tape('index test', async t => {
+  t.plan(1);
+
+  try {
+    const res = await runner.run(Object.assign({}, argsTemplate, {secure: true}), '/');
+
+    const length = parseInt(res.headers.get('content-length'), 10);
+
+    if (length === 219) {
+      t.pass(`got index file, length: ${length}`);
+    } else {
+      t.fail(`index fail, length: ${length}`);
+    }
+  } catch (e) {
+    t.fail('Failed: ', e);
+  }
+});
