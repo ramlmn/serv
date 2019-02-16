@@ -82,6 +82,12 @@ if (args.http2) {
 
   const server = await createServer(args);
 
+  const closeServer = _ => {
+    if (server.listening) {
+      server.close();
+    }
+  };
+
   server.listen(PORT, '0.0.0.0', _ => {
     let address = server.address();
 
@@ -101,11 +107,11 @@ if (args.http2) {
     );
   });
 
-  process.on('exit', server.close);
-  process.on('SIGTERM', server.close);
+  process.on('exit', closeServer);
+  process.on('SIGTERM', closeServer);
   process.on('SIGINT', _ => {
     console.log(magenta('Terminating...'));
-    server.close();
+    closeServer();
     process.exit(0);
   });
 })().catch(err => {
