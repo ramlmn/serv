@@ -9,8 +9,8 @@ environment:
 
 install:
     # install openssl
-  - ps: Start-FileDownload 'https://slproweb.com/download/Win64OpenSSL-1_1_1a.exe'
-  - ps: Start-Process "Win64OpenSSL-1_1_1a.exe" -ArgumentList "/silent /verysilent /sp- /suppressmsgboxes" -Wait
+  - ps: Start-FileDownload 'https://slproweb.com/download/Win64OpenSSL_Light-1_1_1b.exe'
+  - ps: Start-Process "Win64OpenSSL_Light-1_1_1b.exe" -ArgumentList "/silent /verysilent /sp- /suppressmsgboxes" -Wait
     # install node
   - ps: Install-Product node $env:nodejs_version
   - npm install
