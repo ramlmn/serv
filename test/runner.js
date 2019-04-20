@@ -4,45 +4,48 @@ const {Agent: HTTPSAgent} = require('https');
 
 const {createServer} = require('../lib/serv-utils.js');
 
-const isCompressed = (res) => {
-  return res.headers['Content-Encoding'] === 'gzip';
-};
+const getOpts = opts => {
+  opts = Object.assign({}, {
+    dir: 'test/samples/',
+  }, opts);
 
-const isOK = (res) => {
-  return res.status === 200;
+  if (opts.http2) {
+    opts.httpVersion = 2;
+    opts.ssl = true;
+  } else {
+    opts.httpVersion = 1;
+  }
+
+  if (opts.ssl || opts['self-signed'] || (opts['ssl-cert'] && opts['ssl-key'])) {
+    opts.ssl = true;
+  }
+
+  return opts;
 };
 
 module.exports.run = async (args, urlPath) => {
-  const PORT = await getPort();
+  args = getOpts(args);
 
+  const PORT = await getPort();
   const server = await createServer(args);
 
-  try {
-    await new Promise((resolve, reject) => {
-      server.listen(PORT, '0.0.0.0', err => err ? reject() : resolve());
+  await new Promise((resolve, reject) => {
+    server.listen(PORT, '0.0.0.0', err => err ? reject() : resolve());
+  });
+
+  const p = `http${(args.ssl || args.version === 2) ? 's' : ''}://127.0.0.1:${PORT}${urlPath}`;
+
+  const fetchOpts = Object.assign({}, args.fetchOpts);
+
+  if (args.ssl || args.version === 2) {
+    // still no http2 testing
+    fetchOpts.agent = new HTTPSAgent({
+      rejectUnauthorized: false,
     });
-
-    const p = `http${(args.secure || args.version === 2) ? 's' : ''}://localhost:${PORT}${urlPath}`;
-
-    const fetchOpts = {};
-
-    if (args.secure || args.version === 2) {
-      // still no http2 testing
-      fetchOpts.agent = new HTTPSAgent({
-        rejectUnauthorized: false,
-      });
-    }
-
-    const res = await fetch(p, fetchOpts);
-
-    res.isCompressed = isCompressed(res);
-    res.isOK = isOK(res);
-
-    server.close();
-    return res;
-  } catch (err) {
-    // close and throw again
-    server.close();
-    throw err;
   }
+
+  const res = await fetch(p, fetchOpts);
+
+  server.close();
+  return res;
 };

@@ -12,13 +12,7 @@ Static file server with https, http2 (recommened only for development)
 
 ``` bash
 $ npm install --global @ramlmn/serv
-
-# or
-
-$ git clone https://github.com/ramlmn/serv.git && cd serv
-$ npm install && npm link
 ```
-Try `sudo` with `npm link` if it fails.
 
 **Note:** Windows users, get OpenSSL from
 [https://slproweb.com/products/Win32OpenSSL.html](https://slproweb.com/products/Win32OpenSSL.html)
@@ -26,27 +20,40 @@ Try `sudo` with `npm link` if it fails.
 
 ## Usage
 
-### From terminal
+```
+  serv - Static file server with https and http2
 
-``` bash
-$ serv --dir path/to/dir/ --port 8080
+  Usage
+    Serve current directory
+
+      $ serv
+
+    Listen on port 8080 with compression
+
+      $ serv --port 8080 --compress -d ./site/
+
+    Listen over https with directory listing (uses self-signed certificates)
+
+      $ serv --self-signed --listing
+
+    Use specific SSL certificate and private key
+
+      $ serv --ssl-cert ./cred.cert --ssl-key ./cred.key
+
+  Options
+    -h, --help             Shows this help text
+    -p, --port             Port to listen on (default $PORT or 5000)
+    -d, --dir              Path to directory
+    -l, --listing          Enable directory listing
+    -s, --self-signed      Use self-signed certificates (enables TLS/SSL)
+    --ssl-cert             Path to SSL certificate file (enables TLS/SSL)
+    --ssl-key              Path to SSL private key file (enables TLS/SSL)
+    -2, --http2            Use http2 (enables TLS/SSL)
+    -c, --compress         Enables compression (gzip)
 ```
 
-
-#### Flags
-
- Flag               | Description
---------------------|-----------------------------------------------
- `-p`, `--port`     | Port to listen on (default 5000)
- `-d`, `--dir`      | Relative path to directory to serve
- `-l`, `--listing`  | Enable directory listing
- `-s`, `--secure`   | Enables SSL flag
- `-2`, `--http2`    | Enables http2 flag
- `-c`, `--compress` | Enables compression
- `-h`, `--help`     | Shows usage and options
-
 **Note:** Currently no browser supports http2 without TLS, `--http2` currently is
-worthy only when used with `-s`
+worthy only when TLS/SSL is enabled
 [(ref)](https://nodejs.org/api/http2.html#http2_server_side_example)
 
 
