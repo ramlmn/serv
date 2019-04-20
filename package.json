@@ -2,7 +2,7 @@
   "name": "@ramlmn/serv",
   "version": "0.6.0",
   "author": "@r0mflip",
-  "description": "Static file server with https, http2",
+  "description": "Static file server with https and http2",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/ramlmn/serv#readme",
   "engines": {
-    "node": "^8.10.0 || >=9.10.0"
+    "node": ">=9.10.0"
   },
   "keywords": [
     "serv",
@@ -26,9 +26,9 @@
     "listing"
   ],
   "scripts": {
-    "start": "node ./bin/serv.js -p 5000 -c -l -d . --http2",
+    "start": "node ./bin/serv.js -p 5000 -c -l -d .",
     "lint": "eslint .",
-    "test": "node test/test.js"
+    "test": "node test/test.js | tap-spec"
   },
   "main": "./lib/serv.js",
   "bin": {
@@ -37,22 +37,26 @@
   "files": [
     "bin/*",
     "lib/*",
-    ".eslintrc"
+    ".eslintrc",
+    "LICENCE"
   ],
   "dependencies": {
     "arg": "^4.1.0",
-    "compression": "^1.7.3",
+    "compression": "^1.7.4",
     "etag": "^1.8.1",
     "fresh": "^0.5.2",
-    "get-port": "^4.1.0",
-    "kleur": "^3.0.2",
-    "mime": "^2.4.0",
-    "pem": "^1.14.1"
+    "get-port": "^5.0.0",
+    "kleur": "^3.0.3",
+    "mime": "^2.4.2",
+    "pem": "^1.14.2",
+    "range-parser": "^1.2.0"
   },
   "devDependencies": {
-    "eslint": "^5.13.0",
+    "eslint": "^5.16.0",
     "eslint-config-r0mflip": "^0.2.1",
     "node-fetch": "^2.3.0",
-    "tape": "^4.10.0"
+    "tap-spec": "^5.0.0",
+    "tape": "^4.10.1",
+    "tape-promise": "^4.0.0"
   }
 }
