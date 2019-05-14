@@ -23,12 +23,12 @@ test('cli: use port from environment', async t => {
   t.end();
 });
 
-test('cli: test https, default port', async t => {
-  const [err, res] = await testCli({ssl: true}, 5000, '/index.html');
-  t.equal(err, null, 'no error');
-  t.equal(res.status, 200, 'got 200');
-  t.end();
-});
+// test('cli: test https, default port', async t => {
+//   const [err, res] = await testCli({ssl: true}, 5000, '/index.html');
+//   t.equal(err, null, 'no error');
+//   t.equal(res.status, 200, 'got 200');
+//   t.end();
+// });
 
 test('cli: test https, environment port', async t => {
   const PORT = await getPort();
