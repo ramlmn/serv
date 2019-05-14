@@ -18,6 +18,7 @@ const rawArgs = arg({
     '--ssl-cert': String,
     '--ssl-key': String,
     '--http2': Boolean,
+    '--httpVersion': Number,
 
     '-h': '--help',
     '-v': '--version',
@@ -60,7 +61,7 @@ if (args.help) {
 
     Use specific SSL certificate and private key
 
-      $ serv --ssl-cert ./cred.cert --ssl-key ./cred.key
+      $ serv --ssl-cert ./cert.pem --ssl-key ./key.pem
 
   Options
     -h, --help             Shows this help text
@@ -86,12 +87,12 @@ if (args.http2) {
 }
 
 // enable ssl flag when certificate id provided
-if (args['self-signed'] || (args['ssl-cert'] && args['ssl-key'])) {
+if (args['ssl-cert'] && args['ssl-key']) {
   args.ssl = true;
 }
 
 // get deault port from environment or else fallback
-args.port = args.port || (process.env.PORT || 5000);
+args.port = Number.parseInt(args.port || (process.env.PORT || 5000), 10);
 
 
 (async _ => {

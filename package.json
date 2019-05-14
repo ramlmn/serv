@@ -48,7 +48,6 @@
     "get-port": "^5.0.0",
     "kleur": "^3.0.3",
     "mime": "^2.4.2",
-    "pem": "^1.14.2",
     "range-parser": "^1.2.0"
   },
   "devDependencies": {
