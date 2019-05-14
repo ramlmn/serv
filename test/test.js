@@ -6,22 +6,22 @@ const {testCli} = require('./cli-runner.js');
 
 const test = _test(tape);
 
-// test('cli: default port 5000', async t => {
-//   const [err, res] = await testCli({}, 5000, '/index.html');
-//   t.equal(err, null, 'no error');
-//   t.equal(res.status, 200, 'got 200');
-//   t.end();
-// });
+test('cli: default port 5000', async t => {
+  const [err, res] = await testCli({}, 5000, '/index.html');
+  t.equal(err, null, 'no error');
+  t.equal(res.status, 200, 'got 200');
+  t.end();
+});
 
-// test('cli: use port from environment', async t => {
-//   const PORT = await getPort();
-//   process.env.PORT = PORT;
-//   const [err, res] = await testCli({}, PORT, '/index.html');
-//   process.env.PORT = null;
-//   t.equal(err, null, 'no error');
-//   t.equal(res.status, 200, 'got 200');
-//   t.end();
-// });
+test('cli: use port from environment', async t => {
+  const PORT = await getPort();
+  process.env.PORT = PORT;
+  const [err, res] = await testCli({}, PORT, '/index.html');
+  process.env.PORT = null;
+  t.equal(err, null, 'no error');
+  t.equal(res.status, 200, 'got 200');
+  t.end();
+});
 
 test('cli: test https, default port', async t => {
   const [err, res] = await testCli({ssl: true}, 5000, '/index.html');
