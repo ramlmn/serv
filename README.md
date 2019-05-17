@@ -14,9 +14,6 @@ Static file server with https, http2 (recommened only for development)
 $ npm install --global @ramlmn/serv
 ```
 
-**Note:** Windows users, get OpenSSL from
-[https://slproweb.com/products/Win32OpenSSL.html](https://slproweb.com/products/Win32OpenSSL.html)
-
 
 ## Usage
 
@@ -45,11 +42,11 @@ $ npm install --global @ramlmn/serv
     -p, --port             Port to listen on (default $PORT or 5000)
     -d, --dir              Path to directory
     -l, --listing          Enable directory listing
-    -s, --self-signed      Use self-signed certificates (enables TLS/SSL)
+    -c, --compress         Enables compression (gzip)
+    -s, --ssl              Use self-signed certificates (enables TLS/SSL)
     --ssl-cert             Path to SSL certificate file (enables TLS/SSL)
     --ssl-key              Path to SSL private key file (enables TLS/SSL)
-    -2, --http2            Use http2 (enables TLS/SSL)
-    -c, --compress         Enables compression (gzip)
+    --http2                Use http2 (enables TLS/SSL)
 ```
 
 **Note:** Currently no browser supports http2 without TLS, `--http2` currently is

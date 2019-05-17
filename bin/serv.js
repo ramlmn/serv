@@ -61,18 +61,18 @@ if (args.help) {
 
     Use specific SSL certificate and private key
 
-      $ serv --ssl-cert ./cert.pem --ssl-key ./key.pem
+      $ serv --ssl-cert ./cred.cert --ssl-key ./cred.key
 
   Options
     -h, --help             Shows this help text
     -p, --port             Port to listen on (default $PORT or 5000)
     -d, --dir              Path to directory
     -l, --listing          Enable directory listing
-    -s, --self-signed      Use self-signed certificates (enables TLS/SSL)
+    -c, --compress         Enables compression (gzip)
+    -s, --ssl              Use self-signed certificates (enables TLS/SSL)
     --ssl-cert             Path to SSL certificate file (enables TLS/SSL)
     --ssl-key              Path to SSL private key file (enables TLS/SSL)
-    -2, --http2            Use http2 (enables TLS/SSL)
-    -c, --compress         Enables compression (gzip)
+    --http2                Use http2 (enables TLS/SSL)
   `);
   process.exit(0);
 }
