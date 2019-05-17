@@ -1,44 +1,8 @@
 const tape = require('tape');
 const _test = require('tape-promise').default;
-const getPort = require('get-port');
 const runner = require('./runner.js');
-const {testCli} = require('./cli-runner.js');
 
 const test = _test(tape);
-
-test('cli: default port 5000', async t => {
-  const [err, res] = await testCli({}, 5000, '/index.html');
-  t.equal(err, null, 'no error');
-  t.equal(res.status, 200, 'got 200');
-  t.end();
-});
-
-test('cli: use port from environment', async t => {
-  const PORT = await getPort();
-  process.env.PORT = PORT;
-  const [err, res] = await testCli({}, PORT, '/index.html');
-  process.env.PORT = null;
-  t.equal(err, null, 'no error');
-  t.equal(res.status, 200, 'got 200');
-  t.end();
-});
-
-// test('cli: test https, default port', async t => {
-//   const [err, res] = await testCli({ssl: true}, 5000, '/index.html');
-//   t.equal(err, null, 'no error');
-//   t.equal(res.status, 200, 'got 200');
-//   t.end();
-// });
-
-test('cli: test https, environment port', async t => {
-  const PORT = await getPort();
-  process.env.PORT = PORT;
-  const [err, res] = await testCli({ssl: true}, PORT, '/index.html');
-  process.env.PORT = null;
-  t.equal(err, null, 'no error');
-  t.equal(res.status, 200, 'got 200');
-  t.end();
-});
 
 test('200 response over http', async t => {
   const res = await runner.run({}, '/sample.json');
@@ -49,7 +13,7 @@ test('200 response over http', async t => {
 });
 
 test('200 response over https', async t => {
-  const res = await runner.run({'self-signed': true}, '/sample.json');
+  const res = await runner.run({ssl: true}, '/sample.json');
   t.true(res.headers.get('ETag'), 'has ETag');
   await t.doesNotReject(res.json(), 'body okay');
   t.equal(res.status, 200, 'got 200');
@@ -64,7 +28,7 @@ test('compression over http', async t => {
 });
 
 test('compression over https', async t => {
-  const res = await runner.run({'self-signed': true, compress: true}, '/subdir/garble.txt');
+  const res = await runner.run({ssl: true, compress: true}, '/subdir/garble.txt');
   t.equal(res.status, 200, 'got 200');
   t.equal(res.headers.get('Content-Encoding'), 'gzip', 'is gzip');
   t.end();
@@ -78,7 +42,7 @@ test('content length over http', async t => {
 });
 
 test('content length over https', async t => {
-  const res = await runner.run({'self-signed': true}, '/index.html');
+  const res = await runner.run({ssl: true}, '/index.html');
   t.equal(res.status, 200, 'got 200');
   t.looseEqual(res.headers.get('Content-Length'), 219, 'exact length');
   t.end();
