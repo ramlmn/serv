@@ -47,13 +47,13 @@
     "fresh": "^0.5.2",
     "get-port": "^5.0.0",
     "kleur": "^3.0.3",
-    "mime": "^2.4.2",
-    "range-parser": "^1.2.0"
+    "mime": "^2.4.3",
+    "range-parser": "^1.2.1"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
     "eslint-config-r0mflip": "^0.2.1",
-    "node-fetch": "^2.3.0",
+    "node-fetch": "^2.6.0",
     "tap-spec": "^5.0.0",
     "tape": "^4.10.1",
     "tape-promise": "^4.0.0"
