@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/ramlmn/serv#readme",
   "engines": {
-    "node": ">=9.10.0"
+    "node": ">=10.9.0"
   },
   "keywords": [
     "serv",
