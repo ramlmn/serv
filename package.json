@@ -1,6 +1,6 @@
 {
   "name": "@ramlmn/serv",
-  "version": "0.6.0",
+  "version": "0.8.0",
   "author": "@r0mflip",
   "description": "Static file server with https and http2",
   "license": "MIT",
