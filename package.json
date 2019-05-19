@@ -28,7 +28,8 @@
   "scripts": {
     "start": "node ./bin/serv.js -p 5000 -c -l -s -d .",
     "lint": "eslint .",
-    "test": "node test/test.js | tap-spec"
+    "test": "node test/test.js | tap-spec",
+    "gencerts": "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj \"/C=LN/ST=Intranet/L=Local/O=Local\\ Network/OU=Network/CN=localhost/emailAddress=local@network\" -keyout \"./bin/local.key\" -out \"./bin/local.cert\" -reqexts v3_req -extensions v3_ca"
   },
   "main": "./lib/serv.js",
   "bin": {

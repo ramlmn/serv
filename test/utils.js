@@ -1,10 +1,9 @@
 const {Agent: HTTPSAgent} = require('https');
-const path = require('path');
 const fetch = require('node-fetch');
 
 const getOpts = opts => {
   opts = Object.assign({}, {
-    dir: path.resolve('test/samples/'),
+    dir: './test/samples/',
   }, opts);
 
   if (opts.http2) {
