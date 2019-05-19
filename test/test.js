@@ -13,7 +13,7 @@ test('200 response over http', async t => {
 });
 
 test('200 response over https', async t => {
-  const res = await runner.run({'self-signed': true}, '/sample.json');
+  const res = await runner.run({ssl: true}, '/sample.json');
   t.true(res.headers.get('ETag'), 'has ETag');
   await t.doesNotReject(res.json(), 'body okay');
   t.equal(res.status, 200, 'got 200');
@@ -22,101 +22,75 @@ test('200 response over https', async t => {
 
 test('compression over http', async t => {
   const res = await runner.run({compress: true}, '/subdir/garble.txt');
-  await t.doesNotReject(res.text(), 'body okay');
   t.equal(res.status, 200, 'got 200');
-  t.true(res.headers.get('ETag'), 'has ETag');
   t.equal(res.headers.get('Content-Encoding'), 'gzip', 'is gzip');
   t.end();
 });
 
 test('compression over https', async t => {
-  const res = await runner.run({'self-signed': true, compress: true}, '/subdir/garble.txt');
-  await t.doesNotReject(res.text(), 'body okay');
+  const res = await runner.run({ssl: true, compress: true}, '/subdir/garble.txt');
   t.equal(res.status, 200, 'got 200');
   t.equal(res.headers.get('Content-Encoding'), 'gzip', 'is gzip');
-  t.true(res.headers.get('ETag'), 'has ETag');
-  t.equal(res.headers.get('Cache-Control'), 'public, max-age=31536000', 'cache header set');
   t.end();
 });
 
 test('content length over http', async t => {
   const res = await runner.run({}, '/index.html');
-  await t.doesNotReject(res.text(), 'body okay');
   t.equal(res.status, 200, 'got 200');
   t.looseEquals(res.headers.get('Content-Length'), 219, 'exact length');
-  t.true(res.headers.get('ETag'), 'has ETag');
-  t.equal(res.headers.get('Cache-Control'), 'public, max-age=31536000', 'cache header set');
   t.end();
 });
 
 test('content length over https', async t => {
-  const res = await runner.run({'self-signed': true}, '/index.html');
-  await t.doesNotReject(res.text(), 'body okay');
+  const res = await runner.run({ssl: true}, '/index.html');
   t.equal(res.status, 200, 'got 200');
   t.looseEqual(res.headers.get('Content-Length'), 219, 'exact length');
-  t.true(res.headers.get('ETag'), 'has ETag');
-  t.equal(res.headers.get('Cache-Control'), 'public, max-age=31536000', 'cache header set');
   t.end();
 });
 
 test('non existent file should 404', async t => {
   const res = await runner.run({}, '/nonexistent.file');
-  await t.doesNotReject(res.text(), 'body okay');
-  t.false(res.headers.get('ETag'), 'has no ETag');
-  t.equal(res.headers.get('Cache-Control'), 'no-cache', 'no-cache set');
+  t.equal(res.status, 404, 'got 404');
   t.end();
 });
 
 test('non existent file should 404, no extension', async t => {
   const res = await runner.run({}, '/nonexistent');
-  await t.doesNotReject(res.text(), 'body okay');
-  t.false(res.headers.get('ETag'), 'has no ETag');
-  t.equal(res.headers.get('Cache-Control'), 'no-cache', 'no-cache set');
+  t.equal(res.status, 404, 'got 404');
   t.end();
 });
 
 test('index should be served in root', async t => {
   const res = await runner.run({}, '/');
-  await t.doesNotReject(res.text(), 'body okay');
   t.equal(res.status, 200, 'got 200');
   t.equal(res.headers.get('Content-Type'), 'text/html', 'got text/html');
-  t.true(res.headers.get('ETag'), 'has ETag');
-  t.equal(res.headers.get('Cache-Control'), 'public, max-age=31536000', 'cache header set');
+  await t.doesNotReject(res.text(), 'body okay');
   t.end();
 });
 
 test('index should be served inside subdir', async t => {
   const res = await runner.run({}, '/subdir-2/');
-  await t.doesNotReject(res.text(), 'body okay');
   t.equal(res.status, 200, 'got 200');
   t.equal(res.headers.get('Content-Type'), 'text/html', 'got text/html');
-  t.ok(res.headers.get('ETag'), 'has ETag');
-  t.equal(res.headers.get('Cache-Control'), 'public, max-age=31536000', 'cache header set');
+  await t.doesNotReject(res.text(), 'body okay');
   t.end();
 });
 
 test('no extension file should 200', async t => {
   const res = await runner.run({}, '/noextfile');
-  await t.doesNotReject(res.text(), 'body okay');
   t.equal(res.status, 200, 'got 200');
-  t.ok(res.headers.get('ETag'), 'has ETag');
-  t.equal(res.headers.get('Cache-Control'), 'public, max-age=31536000', 'cache header set');
   t.end();
 });
 
 test('no index 404 in directories', async t => {
   const res = await runner.run({}, '/subdir/');
-  await t.doesNotReject(res.text(), 'body okay');
-  t.false(res.headers.get('ETag'), 'no ETag');
-  t.equal(res.headers.get('Cache-Control'), 'no-cache', 'no-cache set');
+  t.equal(res.status, 404, 'got 404');
   t.end();
 });
 
 test('no index 404 in directories, no tailing slash', async t => {
   const res = await runner.run({}, '/subdir');
-  await t.doesNotReject(res.text(), 'body okay');
-  t.false(res.headers.get('ETag'), 'no ETag');
-  t.equal(res.headers.get('Cache-Control'), 'no-cache', 'no-cache set');
+  t.equal(res.status, 404, 'got 404');
   t.end();
 });
 
@@ -142,17 +116,13 @@ test('directory listing, no trailing slash', async t => {
 
 test('directory named extension should 404', async t => {
   const res = await runner.run({}, '/dir.ext/');
-  await t.doesNotReject(res.text(), 'body okay');
-  t.false(res.headers.get('ETag'), 'no ETag');
-  t.equal(res.headers.get('Cache-Control'), 'no-cache', 'no-cache set');
+  t.equal(res.status, 404, 'got 404');
   t.end();
 });
 
 test('directory named extension, no trailing slash', async t => {
   const res = await runner.run({}, '/dir.ext');
   t.equal(res.status, 404, 'got 404');
-  t.false(res.headers.get('ETag'), 'no ETag');
-  t.equal(res.headers.get('Cache-Control'), 'no-cache', 'no-cache set');
   t.end();
 });
 
@@ -169,16 +139,12 @@ test('markdown file inside fold.er', async t => {
 test('non-existent subdir should 404', async t => {
   const res = await runner.run({}, '/subdir/noexistent/dir/');
   t.equal(res.status, 404, 'got 404');
-  t.false(res.headers.get('ETag'), 'no ETag');
-  t.equal(res.headers.get('Cache-Control'), 'no-cache', 'no-cache set');
   t.end();
 });
 
 test('non-existent subdir should 404', async t => {
   const res = await runner.run({}, '/subdir/noexistent/dir/');
   t.equal(res.status, 404, 'got 404');
-  t.false(res.headers.get('ETag'), 'no ETag');
-  t.equal(res.headers.get('Cache-Control'), 'no-cache', 'no-cache set');
   t.end();
 });
 

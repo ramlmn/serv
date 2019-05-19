@@ -18,6 +18,7 @@ const rawArgs = arg({
     '--ssl-cert': String,
     '--ssl-key': String,
     '--http2': Boolean,
+    '--httpVersion': Number,
 
     '-h': '--help',
     '-v': '--version',
@@ -67,11 +68,11 @@ if (args.help) {
     -p, --port             Port to listen on (default $PORT or 5000)
     -d, --dir              Path to directory
     -l, --listing          Enable directory listing
-    -s, --self-signed      Use self-signed certificates (enables TLS/SSL)
+    -c, --compress         Enables compression (gzip)
+    -s, --ssl              Use self-signed certificates (enables TLS/SSL)
     --ssl-cert             Path to SSL certificate file (enables TLS/SSL)
     --ssl-key              Path to SSL private key file (enables TLS/SSL)
-    -2, --http2            Use http2 (enables TLS/SSL)
-    -c, --compress         Enables compression (gzip)
+    --http2                Use http2 (enables TLS/SSL)
   `);
   process.exit(0);
 }
@@ -86,12 +87,12 @@ if (args.http2) {
 }
 
 // enable ssl flag when certificate id provided
-if (args['self-signed'] || (args['ssl-cert'] && args['ssl-key'])) {
+if (args['ssl-cert'] && args['ssl-key']) {
   args.ssl = true;
 }
 
 // get deault port from environment or else fallback
-args.port = args.port || (process.env.PORT || 5000);
+args.port = Number.parseInt(args.port || (process.env.PORT || 5000), 10);
 
 
 (async _ => {
