@@ -10,6 +10,7 @@ const {createServer} = require('../lib/serv-utils.js');
 const rawArgs = arg({
     '--help': Boolean,
     '--version': Boolean,
+    '--host': String,
     '--port': Number,
     '--dir': String,
     '--listing': Boolean,
@@ -65,6 +66,7 @@ if (args.help) {
 
   Options
     -h, --help             Shows this help text
+    --host                 Host to listen on (default "0.0.0.0")
     -p, --port             Port to listen on (default $PORT or 5000)
     -d, --dir              Path to directory
     -l, --listing          Enable directory listing
@@ -93,6 +95,7 @@ if (args['ssl-cert'] && args['ssl-key']) {
 
 // get deault port from environment or else fallback
 args.port = Number.parseInt(args.port || (process.env.PORT || 5000), 10);
+args.host = args.host || "0.0.0.0";
 
 
 (async _ => {
@@ -110,7 +113,7 @@ args.port = Number.parseInt(args.port || (process.env.PORT || 5000), 10);
     });
   };
 
-  server.listen(PORT, '0.0.0.0', _ => {
+  server.listen(PORT, args.host, _ => {
     let address = server.address();
 
     if (args.port && args.port !== PORT) {
