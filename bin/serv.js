@@ -66,7 +66,7 @@ if (args.help) {
 
   Options
     -h, --help             Shows this help text
-    --host                 Host to listen on (default "0.0.0.0")
+    --host                 Host to listen on (default '0.0.0.0')
     -p, --port             Port to listen on (default $PORT or 5000)
     -d, --dir              Path to directory
     -l, --listing          Enable directory listing
@@ -95,7 +95,7 @@ if (args['ssl-cert'] && args['ssl-key']) {
 
 // get deault port from environment or else fallback
 args.port = Number.parseInt(args.port || (process.env.PORT || 5000), 10);
-args.host = args.host || "0.0.0.0";
+args.host = args.host || '0.0.0.0';
 
 
 (async _ => {
